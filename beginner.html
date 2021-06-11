@@ -2,8 +2,8 @@
 <script src="http://webframework.com/jl.js"></script>
 <link rel="stylesheet" type="text/css" href="beginner.css">
 <div id="panel1">
-<h1>source code</h1>
-<textarea id="code">
+	<h1>source code</h1>
+	<textarea id="code">
 function main()
 {
 	var x;
@@ -34,29 +34,29 @@ function main()
 }
 </textarea>
 
-<div>
-<button onclick="compile();">Start/Reset Program</button>
-<button>Run Next Statement</button>
-<label for="statementcounter">Next Statement</label><input id="statementcounter">
-</div>
+	<div>
+		<button onclick="compile();">Start/Reset Program</button>
+		<button>Run Next Statement</button>
+		<label for="statementcounter">Next Statement</label><input id="statementcounter">
+	</div>
 
-<div id="linedcode">
-</div>
+	<div id="linedcode">
+	</div>
 </div>
 
 <div id="panel2">
-<div id="stack">
-<h1>memory</h1>
-</div>
+	<div id="stack">
+		<h1>memory</h1>
+	</div>
 </div>
 
 <div id="panel3">
-<h1>CPU</h1>
-<input id="cpuinput1"><label for="cpuinput1">Input 1</label><br>
-<input id="cpuoperator"><label for="cpuoperator">Operator</label><br>
-<input id="cpuinput2"><label for="cpuinput2">Input 2</label><br>
-<input id="cpuoutput"><label for="cpuoutput">Output</label><br>
-<input id="cpureturn"><label for="cpureturn">Return Value</label>
+	<h1>CPU</h1>
+	<input id="cpuinput1"><label for="cpuinput1">Input 1</label><br>
+	<input id="cpuoperator"><label for="cpuoperator">Operator</label><br>
+	<input id="cpuinput2"><label for="cpuinput2">Input 2</label><br>
+	<input id="cpuoutput"><label for="cpuoutput">Output</label><br>
+	<input id="cpureturn"><label for="cpureturn">Return Value</label>
 </div>
 
 <script src="parser.js"></script>
