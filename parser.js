@@ -4,7 +4,7 @@
  * @returns {Array.<string>}
  */
 function parse(code) {
-	var tokenRegex = /([a-zA-Z_]+\w*)|([+\-*\/%<>!();,{}])|(\d+)|(&&)|(\|\|)|("((\\{2})*|(\\")|[^"])*")|(===)|(=)/g;
+	var tokenRegex = /([a-zA-Z_]+\w*)|([+\-*\/%<>!();,{}])|(\d+)|(&&)|(\|\|)|("((\\{2})*|(\\")|[^"])*")|(==)|(=)/g;
 	var tokenArray = code.match(tokenRegex);
 	return tokenArray;
 }
