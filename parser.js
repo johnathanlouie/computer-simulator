@@ -1,24 +1,49 @@
+/**
+ * 
+ * @param {string} code 
+ * @returns {Array.<string>}
+ */
 function parse(code) {
 	var tokenRegex = /([a-zA-Z_]+\w*)|([+\-*\/%<>!();,{}])|(\d+)|(&&)|(\|\|)|("((\\{2})*|(\\")|[^"])*")|(===)|(=)/g;
 	var tokenArray = code.match(tokenRegex);
 	return tokenArray;
 }
 
-function isValidIdentifier(str) {
-	return /^[a-zA-Z_]+\w*$/.test(str) && !isKeyword(str);
+/**
+ * 
+ * @param {string} token 
+ * @returns {boolean}
+ */
+function isValidIdentifier(token) {
+	return /^[a-zA-Z_]+\w*$/.test(token) && !isKeyword(token);
 }
 
-function isKeyword(str) {
-	var keywords = [
-		"function",
-		"if",
-		"else",
-		"var",
-		"while"
-	];
-	return keywords.indexOf(str) !== -1;
+/**
+ * 
+ * @param {string} token 
+ * @returns {boolean}
+ */
+function isKeyword(token) {
+	return [
+		'int',
+		'float',
+		'bool',
+		'char',
+		'if',
+		'else',
+		'class',
+		'while',
+		'true',
+		'false',
+	].indexOf(token) !== -1;
 }
 
+/**
+ * 
+ * @param {number} openingBracketIndex 
+ * @param {Array.<string>} tokens 
+ * @returns {number}
+ */
 function findClosingBracketIndex(openingBracketIndex, tokens) {
 	var nestLevel = 0;
 	var openingBracket = tokens[openingBracketIndex];
@@ -47,6 +72,11 @@ function findClosingBracketIndex(openingBracketIndex, tokens) {
 	throw new Error("compiler: no matching closing bracket.");
 }
 
+/**
+ * 
+ * @param {Array.<string>} tokens 
+ * @returns 
+ */
 function treeify(tokens) {
 	// tree is an array of statements and blocks. each block is a header and body. nesting possible.
 	var tree = [];
@@ -84,16 +114,21 @@ var operators = [
 	["=="],
 	["&&"],
 	["||"],
-	["="]
+	["="],
 ];
 
 function lowestOrderOperator() {
 
 }
 
+/**
+ * 
+ * @param {string} token 
+ * @returns {boolean}
+ */
 function isOperator(token) {
-	for (var arr of operators) {
-		for (var op of arr) {
+	for (let operatorLevel of operators) {
+		for (var op of operatorLevel) {
 			if (token === op) {
 				return true;
 			}
@@ -122,7 +157,7 @@ function subexpression(tokens) {
 				// something wrong
 			}
 		}
-		else if (tokens[i] === "(") {
+		else if (tokens[i] === '(') {
 			// group
 		}
 		else if (isOperator(tokens[i])) {
@@ -137,26 +172,58 @@ function subexpression(tokens) {
 	}
 }
 
+/**
+ * 
+ * @param {string} token 
+ * @returns {boolean}
+ */
 function isBoolean(token) {
-	return token === "true" || token === "false";
+	return token === 'true' || token === 'false';
 }
 
-function isNumber(token) {
-	return !isNaN(token);
+/**
+ * 
+ * @param {string} token 
+ * @returns {boolean}
+ */
+function isInt(token) {
+	return /^\d+$/.test(token);
 }
 
+/**
+ * 
+ * @param {string} token 
+ * @returns {boolean}
+ */
+function isFloat(token) {
+	return /^\d+.\d+$/.test(token);
+}
+
+/**
+ * 
+ * @param {string} token 
+ * @returns {boolean}
+ */
 function isString(token) {
-	if (token.length < 2) {
-		return false;
-	}
-	if (token[0] === "\"" && token[token.length - 1] === "\"") {
-		return true;
-	}
-	return false;
+	return token.length > 1 && token[0] === '"' && token[token.length - 1] === '"';
 }
 
+/**
+ * 
+ * @param {string} token 
+ * @returns {boolean}
+ */
+function isChar(token) {
+	return token.length === 3 && token[0] === "'" && token[2] === "'";
+}
+
+/**
+ * 
+ * @param {string} token 
+ * @returns {boolean}
+ */
 function isLiteral(token) {
-	return isString(token) || isNumber(token) || isBoolean(token);
+	return isChar(token) || isInt(token) || isFloat(token) || isBoolean(token);
 }
 
 function statementParser(tokens) {
@@ -285,5 +352,4 @@ function nodeMakerFunction(headerTokens) {
 function recombine(headerTokens) {
 	var headerStr = "";
 	for (let i of headerTokens) { headerStr += " " + i; }
-	console.log(headerStr);
 }
