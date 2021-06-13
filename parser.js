@@ -50,6 +50,8 @@ class Token {
 			'while',
 			'true',
 			'false',
+			'return',
+			'void',
 		].indexOf(this.#token) !== -1;
 	}
 
