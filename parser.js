@@ -9,6 +9,7 @@ const OPERATORS = [
 	["="],
 ];
 
+
 class Token {
 
 	/** @type {string} */
@@ -112,7 +113,40 @@ class Token {
 		return false;
 	}
 
+	isOpeningParenthesis() {
+		return this.#token === '(';
+	}
+
+	isClosingingParenthesis() {
+		return this.#token === ')';
+	}
+
+	isOpeningSquareBracket() {
+		return this.#token === '[';
+	}
+
+	isClosingSquareBracket() {
+		return this.#token === ']';
+	}
+
+	isOpeningCurlyBracket() {
+		return this.#token === '{';
+	}
+
+	isClosingCurlyBracket() {
+		return this.#token === '}';
+	}
+
+	isOpeningAngleBracket() {
+		return this.#token === '<';
+	}
+
+	isClosingAngleBracket() {
+		return this.#token === '>';
+	}
+
 }
+
 
 class Parser {
 
