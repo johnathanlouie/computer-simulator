@@ -30,20 +30,38 @@ class Token {
 	 * 
 	 * @returns {boolean}
 	 */
-	isValidIdentifier() {
-		return /^[a-zA-Z_]+\w*$/.test(this.#token) && !isKeyword(this.#token);
+	isAlphanumeric() {
+		return /^[a-zA-Z_]+\w*$/.test(this.#token);
 	}
 
 	/**
 	 * 
 	 * @returns {boolean}
 	 */
-	isKeyword() {
+	isValidIdentifier() {
+		return this.isAlphanumeric() && !isKeyword();
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	isPrimitiveType() {
 		return [
 			'int',
 			'float',
 			'bool',
 			'char',
+			'void',
+		].includes(this.#token);
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	isNonTypeKeyword() {
+		return [
 			'if',
 			'else',
 			'class',
@@ -51,15 +69,31 @@ class Token {
 			'true',
 			'false',
 			'return',
-			'void',
-		].indexOf(this.#token) !== -1;
+			'null',
+		].includes(this.#token);
 	}
 
 	/**
 	 * 
 	 * @returns {boolean}
 	 */
-	isBoolean() {
+	isValidType() {
+		return this.isAlphanumeric() && !this.isNonTypeKeyword() || this.isPrimitiveType();
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	isKeyword() {
+		return this.isPrimitiveType() || this.isNonTypeKeyword();
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	isBooleanLiteral() {
 		return this.#token === 'true' || this.#token === 'false';
 	}
 
@@ -67,7 +101,7 @@ class Token {
 	 * 
 	 * @returns {boolean}
 	 */
-	isInt() {
+	isIntLiteral() {
 		return /^\d+$/.test(this.#token);
 	}
 
@@ -75,7 +109,7 @@ class Token {
 	 * 
 	 * @returns {boolean}
 	 */
-	isFloat() {
+	isFloatLiteral() {
 		return /^\d+.\d+$/.test(this.#token);
 	}
 
@@ -83,7 +117,7 @@ class Token {
 	 * 
 	 * @returns {boolean}
 	 */
-	isString() {
+	isStringLiteral() {
 		return this.#token.length > 1 && this.#token[0] === '"' && this.#token[this.#token.length - 1] === '"';
 	}
 
@@ -91,7 +125,7 @@ class Token {
 	 * 
 	 * @returns {boolean}
 	 */
-	isChar() {
+	isCharLiteral() {
 		return this.#token.length === 3 && this.#token[0] === "'" && this.#token[2] === "'";
 	}
 
@@ -99,8 +133,20 @@ class Token {
 	 * 
 	 * @returns {boolean}
 	 */
+	isNullLiteral() {
+		return this.#token === 'null';
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
 	isLiteral() {
-		return this.isChar() || this.isInt() || this.isFloat() || this.isBoolean();
+		return this.isCharLiteral() ||
+			this.isIntLiteral() ||
+			this.isFloatLiteral() ||
+			this.isBooleanLiteral() ||
+			this.isNullLiteral();
 	}
 
 	/**
