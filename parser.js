@@ -153,26 +153,30 @@ class Token {
 
 class Parser {
 
+	/** @type {Array.<Token>} */
 	#tokens;
 
 	/**
-	 * 
+	 * Returns the index of the matching bracket.
 	 * @param {number} openingBracketIndex 
 	 * @returns {number}
 	 */
 	findClosingBracketIndex(openingBracketIndex) {
-		var nestLevel = 0;
-		var openingBracket = tokens[openingBracketIndex];
-		var closingBracket;
+		let nestLevel = 0;
+		let openingBracket = this.#tokens[openingBracketIndex];
+		let closingBracket;
 		switch (openingBracket) {
-			case "{":
-				closingBracket = "}";
+			case '{':
+				closingBracket = '}';
 				break;
-			case "(":
-				closingBracket = ")";
+			case '(':
+				closingBracket = ')';
+				break;
+			case '[':
+				closingBracket = ']';
 				break;
 			default:
-				throw new Error("compiler: unknown bracket type.");
+				throw new CompilerError(`Expected bracket character at token ${openingBracketIndex}`);
 		}
 		for (let i = openingBracketIndex; i < tokens.length; i++) {
 			if (tokens[i] === openingBracket) {
@@ -185,7 +189,7 @@ class Parser {
 				}
 			}
 		}
-		throw new Error("compiler: no matching closing bracket.");
+		throw new CompilerError(`Opening bracket at ${openingBracketIndex} is missing closing bracket`);
 	}
 
 	/**
