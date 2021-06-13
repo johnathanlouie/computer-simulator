@@ -114,48 +114,57 @@ class Token {
 
 }
 
-/**
- * 
- * @param {string} code 
- * @returns {Array.<Token>}
- */
-function parse(code) {
-	var tokenRegex = /([a-zA-Z_]+\w*)|([+\-*\/%<>!();,{}])|(\d+)|(&&)|(\|\|)|("((\\{2})*|(\\")|[^"])*")|(==)|(=)/g;
-	return code.match(tokenRegex).map(e => new Token(e));
-}
+class Parser {
 
-/**
- * 
- * @param {number} openingBracketIndex 
- * @param {Array.<string>} tokens 
- * @returns {number}
- */
-function findClosingBracketIndex(openingBracketIndex, tokens) {
-	var nestLevel = 0;
-	var openingBracket = tokens[openingBracketIndex];
-	var closingBracket;
-	switch (openingBracket) {
-		case "{":
-			closingBracket = "}";
-			break;
-		case "(":
-			closingBracket = ")";
-			break;
-		default:
-			throw new Error("compiler: unknown bracket type.");
-	}
-	for (let i = openingBracketIndex; i < tokens.length; i++) {
-		if (tokens[i] === openingBracket) {
-			nestLevel++;
+	#tokens;
+
+	/**
+	 * 
+	 * @param {number} openingBracketIndex 
+	 * @returns {number}
+	 */
+	findClosingBracketIndex(openingBracketIndex) {
+		var nestLevel = 0;
+		var openingBracket = tokens[openingBracketIndex];
+		var closingBracket;
+		switch (openingBracket) {
+			case "{":
+				closingBracket = "}";
+				break;
+			case "(":
+				closingBracket = ")";
+				break;
+			default:
+				throw new Error("compiler: unknown bracket type.");
 		}
-		else if (tokens[i] === closingBracket) {
-			nestLevel--;
-			if (nestLevel === 0) {
-				return i;
+		for (let i = openingBracketIndex; i < tokens.length; i++) {
+			if (tokens[i] === openingBracket) {
+				nestLevel++;
+			}
+			else if (tokens[i] === closingBracket) {
+				nestLevel--;
+				if (nestLevel === 0) {
+					return i;
+				}
 			}
 		}
+		throw new Error("compiler: no matching closing bracket.");
 	}
-	throw new Error("compiler: no matching closing bracket.");
+
+	/**
+	 * 
+	 * @param {string} code 
+	 * @returns {Array.<Token>}
+	 */
+	tokenize(code) {
+		let tokenRegex = /([a-zA-Z_]+\w*)|([+\-*\/%<>!();,{}])|(\d+)|(&&)|(\|\|)|("((\\{2})*|(\\")|[^"])*")|(==)|(=)/g;
+		return code.match(tokenRegex).map(e => new Token(e));
+	}
+
+	parse(code) {
+		this.#tokens = this.tokenize(code);
+	}
+
 }
 
 /**
