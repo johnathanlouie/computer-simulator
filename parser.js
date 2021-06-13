@@ -1,41 +1,127 @@
+const OPERATORS = [
+	["!"],
+	["*", "/", "%"],
+	["+", "-"],
+	["<", ">"],
+	["=="],
+	["&&"],
+	["||"],
+	["="],
+];
+
+class Token {
+
+	/** @type {string} */
+	#token;
+
+	/**
+	 * 
+	 * @param {string} token 
+	 */
+	constructor(token) {
+		this.#token = token;
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	isValidIdentifier() {
+		return /^[a-zA-Z_]+\w*$/.test(this.#token) && !isKeyword(this.#token);
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	isKeyword() {
+		return [
+			'int',
+			'float',
+			'bool',
+			'char',
+			'if',
+			'else',
+			'class',
+			'while',
+			'true',
+			'false',
+		].indexOf(this.#token) !== -1;
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	isBoolean() {
+		return this.#token === 'true' || this.#token === 'false';
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	isInt() {
+		return /^\d+$/.test(this.#token);
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	isFloat() {
+		return /^\d+.\d+$/.test(this.#token);
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	isString() {
+		return this.#token.length > 1 && this.#token[0] === '"' && this.#token[this.#token.length - 1] === '"';
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	isChar() {
+		return this.#token.length === 3 && this.#token[0] === "'" && this.#token[2] === "'";
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	isLiteral() {
+		return this.isChar() || this.isInt() || this.isFloat() || this.isBoolean();
+	}
+
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	isOperator() {
+		for (let operators of OPERATORS) {
+			for (var operator of operators) {
+				if (this.#token === operator) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+}
+
 /**
  * 
  * @param {string} code 
- * @returns {Array.<string>}
+ * @returns {Array.<Token>}
  */
 function parse(code) {
 	var tokenRegex = /([a-zA-Z_]+\w*)|([+\-*\/%<>!();,{}])|(\d+)|(&&)|(\|\|)|("((\\{2})*|(\\")|[^"])*")|(==)|(=)/g;
-	var tokenArray = code.match(tokenRegex);
-	return tokenArray;
-}
-
-/**
- * 
- * @param {string} token 
- * @returns {boolean}
- */
-function isValidIdentifier(token) {
-	return /^[a-zA-Z_]+\w*$/.test(token) && !isKeyword(token);
-}
-
-/**
- * 
- * @param {string} token 
- * @returns {boolean}
- */
-function isKeyword(token) {
-	return [
-		'int',
-		'float',
-		'bool',
-		'char',
-		'if',
-		'else',
-		'class',
-		'while',
-		'true',
-		'false',
-	].indexOf(token) !== -1;
+	return code.match(tokenRegex).map(e => new Token(e));
 }
 
 /**
@@ -106,36 +192,7 @@ function treeify(tokens) {
 	return tree;
 }
 
-var operators = [
-	["!"],
-	["*", "/", "%"],
-	["+", "-"],
-	["<", ">"],
-	["=="],
-	["&&"],
-	["||"],
-	["="],
-];
-
-function lowestOrderOperator() {
-
-}
-
-/**
- * 
- * @param {string} token 
- * @returns {boolean}
- */
-function isOperator(token) {
-	for (let operatorLevel of operators) {
-		for (var op of operatorLevel) {
-			if (token === op) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
+function lowestOrderOperator() { }
 
 /*
 variable.
@@ -170,60 +227,6 @@ function subexpression(tokens) {
 			//error
 		}
 	}
-}
-
-/**
- * 
- * @param {string} token 
- * @returns {boolean}
- */
-function isBoolean(token) {
-	return token === 'true' || token === 'false';
-}
-
-/**
- * 
- * @param {string} token 
- * @returns {boolean}
- */
-function isInt(token) {
-	return /^\d+$/.test(token);
-}
-
-/**
- * 
- * @param {string} token 
- * @returns {boolean}
- */
-function isFloat(token) {
-	return /^\d+.\d+$/.test(token);
-}
-
-/**
- * 
- * @param {string} token 
- * @returns {boolean}
- */
-function isString(token) {
-	return token.length > 1 && token[0] === '"' && token[token.length - 1] === '"';
-}
-
-/**
- * 
- * @param {string} token 
- * @returns {boolean}
- */
-function isChar(token) {
-	return token.length === 3 && token[0] === "'" && token[2] === "'";
-}
-
-/**
- * 
- * @param {string} token 
- * @returns {boolean}
- */
-function isLiteral(token) {
-	return isChar(token) || isInt(token) || isFloat(token) || isBoolean(token);
 }
 
 function statementParser(tokens) {
