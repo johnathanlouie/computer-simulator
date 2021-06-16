@@ -215,6 +215,7 @@ const AstNodeType = {
     IF_BLOCK: 10,
     ELSE_BLOCK: 11,
     WHILE_STATEMENT: 12,
+    DOCUMENT: 13,
 };
 
 
@@ -278,6 +279,10 @@ class AbstractSyntaxTreeNode {
             }
         }
         throw new CompilerError(`Opening bracket at toekn ${openingBracketIndex} is missing closing bracket`);
+    }
+
+    #findFirstSemicolon(startIndex) {
+        return this.#tokens.indexOf(';', startIndex);
     }
 
 }
