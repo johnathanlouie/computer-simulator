@@ -267,11 +267,13 @@ class AbstractSyntaxTreeNode {
 
     /**
      * 
+     * @param {AstNodeType} type
      * @param {Array.<Token>} tokens 
      * @param {number} start 
      * @param {number} end 
      */
-    constructor(tokens, start, end) {
+    constructor(type, tokens, start, end) {
+        this.type = type;
         this.#tokens = tokens;
         this.#startIndex = start;
         this.#endIndex = end;
