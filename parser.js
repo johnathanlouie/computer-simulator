@@ -322,7 +322,7 @@ class AbstractSyntaxTreeNode {
      * @returns {boolean}
      */
     #isLastTokenSemicolon() {
-        return this.#tokens[this.#tokens.length - 1].isSemicolon();
+        return this.#tokens[this.#endIndex].isSemicolon();
     }
 
 }
