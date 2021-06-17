@@ -317,6 +317,10 @@ class AbstractSyntaxTreeNode {
         return -1;
     }
 
+    /**
+     * The code is correct only if the final token is a semicolon.
+     * @returns {boolean}
+     */
     #isLastTokenSemicolon() {
         return this.#tokens[this.#tokens.length - 1].isSemicolon();
     }
