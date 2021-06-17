@@ -251,6 +251,9 @@ class AbstractSyntaxTreeNode {
         this.#tokens = tokens;
         this.#startIndex = start;
         this.#endIndex = end;
+        if (!this.#isLastTokenSemicolon()) {
+            throw new CompilerError(`Missing semicolon at token ${this.#endIndex}`);
+        }
     }
 
     /**
