@@ -303,8 +303,22 @@ class AbstractSyntaxTreeNode {
         return -1;
     }
 
+    /**
+     * Finds the first semicolon from a starting point.
+     * @param {number} startIndex 
+     * @returns {number} Index if found, -1 if not found.
+     */
     #findFirstSemicolon(startIndex) {
-        return this.#tokens.indexOf(';', startIndex);
+        for (let i = startIndex; i <= this.#endIndex; i++) {
+            if (this.#tokens[i].isSemicolon()) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    #isLastTokenSemicolon() {
+        return this.#tokens[this.#tokens.length - 1].isSemicolon();
     }
 
 }
