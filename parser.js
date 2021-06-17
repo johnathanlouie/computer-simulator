@@ -284,6 +284,7 @@ class AbstractSyntaxTreeNode {
      * Returns the index of the matching bracket.
      * @param {number} start 
      * @returns {number}
+     * @throws {CompilerError} If start is not a bracket. If there is no matching bracket.
      */
     #findMatchingBracket(start) {
         let nestLevel = 0;
@@ -321,6 +322,20 @@ class AbstractSyntaxTreeNode {
     }
 
     /**
+     * Finds the first opening curly bracket from a starting point.
+     * @param {number} startIndex 
+     * @returns {number} Index if found, -1 if not found.
+     */
+    #findCurlyBracket(startIndex) {
+        for (let i = startIndex; i <= this.#endIndex; i++) {
+            if (this.#tokens[i].isOpeningCurlyBracket()) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Finds the first semicolon from a starting point.
      * @param {number} startIndex 
      * @returns {number} Index if found, -1 if not found.
@@ -340,6 +355,25 @@ class AbstractSyntaxTreeNode {
      */
     #isLastTokenSemicolon() {
         return this.#tokens[this.#endIndex].isSemicolon();
+    }
+
+    /**
+     * Returns the index of a non-nested semicolon.
+     * @param {number} start 
+     * @returns {number} Index if found, -1 if not found.
+     * @throws {CompilerError} If matching bracket is not found.
+     */
+    #findTopLevelSemicolon(start) {
+        while (true) {
+            let semicolon = this.#findFirstSemicolon(start);
+            if (semicolon === -1) { return -1; }
+            let bracket1 = this.#findCurlyBracket(start);
+            if (bracket1 === -1) { return semicolon; }
+            if (semicolon < bracket1) { return semicolon; }
+            let bracket2 = this.#findMatchingBracket(bracket1);
+            if (bracket2 < semicolon) { return semicolon; }
+            start = bracket2 + 1;
+        }
     }
 
 }
