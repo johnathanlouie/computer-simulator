@@ -340,7 +340,7 @@ class AbstractSyntaxTreeNode {
      * @param {number} startIndex 
      * @returns {number} Index if found, -1 if not found.
      */
-    #findFirstSemicolon(startIndex) {
+    #findSemicolon(startIndex) {
         for (let i = startIndex; i <= this.#endIndex; i++) {
             if (this.#tokens[i].isSemicolon()) {
                 return i;
@@ -365,7 +365,7 @@ class AbstractSyntaxTreeNode {
      */
     #findTopLevelSemicolon(start) {
         while (true) {
-            let semicolon = this.#findFirstSemicolon(start);
+            let semicolon = this.#findSemicolon(start);
             if (semicolon === -1) { return -1; }
             let bracket1 = this.#findCurlyBracket(start);
             if (bracket1 === -1) { return semicolon; }
