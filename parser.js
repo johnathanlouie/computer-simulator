@@ -196,6 +196,14 @@ class Token {
         return this.#token === '>';
     }
 
+    isSemicolon() {
+        return this.#token === ';';
+    }
+
+    isOpeningBracket() {
+        return this.isOpeningCurlyBracket() || this.isOpeningParenthesis() || this.isOpeningSquareBracket();
+    }
+
 }
 
 /**
@@ -279,6 +287,20 @@ class AbstractSyntaxTreeNode {
             }
         }
         throw new CompilerError(`Opening bracket at toekn ${openingBracketIndex} is missing closing bracket`);
+    }
+
+    /**
+     * Finds the first opening bracket from a starting point.
+     * @param {number} startIndex 
+     * @returns {number} Index if found, -1 if not found.
+     */
+    #findBracket(startIndex) {
+        for (let i = startIndex; i <= this.#endIndex; i++) {
+            if (this.#tokens[i].isOpeningBracket()) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     #findFirstSemicolon(startIndex) {
