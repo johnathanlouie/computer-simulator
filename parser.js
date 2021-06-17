@@ -204,6 +204,30 @@ class Token {
         return this.isOpeningCurlyBracket() || this.isOpeningParenthesis() || this.isOpeningSquareBracket();
     }
 
+    matchingBracket() {
+        switch (this.#token) {
+            case '{':
+                return new Token('}');
+            case '(':
+                return new Token(')');
+            case '<':
+                return new Token('>');
+            case '[':
+                return new Token(']');
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Returns true if the tokens are the same.
+     * @param {Token} other 
+     * @returns {boolean}
+     */
+    equals(other) {
+        return this.#token === other.#token;
+    }
+
 }
 
 /**
@@ -258,38 +282,28 @@ class AbstractSyntaxTreeNode {
 
     /**
      * Returns the index of the matching bracket.
-     * @param {number} openingBracketIndex 
+     * @param {number} start 
      * @returns {number}
      */
-    #findClosingBracketIndex(openingBracketIndex) {
+    #findMatchingBracket(start) {
         let nestLevel = 0;
-        let openingBracket = this.#tokens[openingBracketIndex];
-        let closingBracket;
-        switch (openingBracket) {
-            case '{':
-                closingBracket = '}';
-                break;
-            case '(':
-                closingBracket = ')';
-                break;
-            case '[':
-                closingBracket = ']';
-                break;
-            default:
-                throw new CompilerError(`Expected bracket character at token ${openingBracketIndex}`);
+        let openingBracket = this.#tokens[start];
+        let closingBracket = this.#tokens[start].matchingBracket();
+        if (closingBracket === null) {
+            throw new CompilerError(`Expected bracket character at token ${start}`);
         }
-        for (let i = openingBracketIndex; i < tokens.length; i++) {
-            if (tokens[i] === openingBracket) {
+        for (let i = start; i < this.#endIndex; i++) {
+            if (openingBracket.equals(tokens[i])) {
                 nestLevel++;
             }
-            else if (tokens[i] === closingBracket) {
+            else if (closingBracket.equals(tokens[i])) {
                 nestLevel--;
                 if (nestLevel === 0) {
                     return i;
                 }
             }
         }
-        throw new CompilerError(`Opening bracket at toekn ${openingBracketIndex} is missing closing bracket`);
+        throw new CompilerError(`Token ${start} is missing matching bracket`);
     }
 
     /**
